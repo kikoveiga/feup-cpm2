@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/weather_service.dart';
 import '../models/weather.dart';
+import '../storage/city_storage.dart';
 
 class WeatherScreen extends StatefulWidget {
   final String city;
@@ -13,11 +14,39 @@ class WeatherScreen extends StatefulWidget {
 
 class _WeatherScreenState extends State<WeatherScreen> {
   late Future<Weather?> weatherData;
+  bool isFavorite = false;
 
   @override
   void initState() {
     super.initState();
     weatherData = WeatherService.fetchWeather(widget.city);
+    _loadFavoriteStatus();
+  }
+
+  Future<void> _loadFavoriteStatus() async {
+    final favorites = await CityStorage.getFavoriteCities();
+    setState(() {
+      isFavorite = favorites.contains(widget.city);
+    });
+  }
+
+  Future<void> _toggleFavorite() async {
+    if (isFavorite) {
+      await CityStorage.removeCity(widget.city);
+    } else {
+      await CityStorage.addCity(widget.city);
+    }
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(isFavorite
+            ? '${widget.city} adicionada aos favoritos'
+            : '${widget.city} removida dos favoritos'),
+      ),
+    );
   }
 
   @override
@@ -26,14 +55,20 @@ class _WeatherScreenState extends State<WeatherScreen> {
       appBar: AppBar(
         title: Text('Clima em ${widget.city}'),
         backgroundColor: Colors.teal,
+        actions: [
+          IconButton(
+            icon: Icon(isFavorite ? Icons.star : Icons.star_border),
+            onPressed: _toggleFavorite,
+          ),
+        ],
       ),
       body: FutureBuilder<Weather?>(
         future: weatherData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Erro ao carregar dados'));
+            return const Center(child: Text('Erro ao carregar dados'));
           } else if (snapshot.hasData) {
             final weather = snapshot.data;
 
@@ -44,28 +79,27 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.network(
-                      'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/icons2/${weather.icon}.png', // URL corrigida
+                      'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/icons2/${weather.icon}.png',
                       width: 100,
                       height: 100,
                     ),
-
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Text(
                       'Temperatura: ${weather.temp}°C',
-                      style: TextStyle(fontSize: 24),
+                      style: const TextStyle(fontSize: 24),
                     ),
                     Text(
                       'Condições: ${weather.conditions}',
-                      style: TextStyle(fontSize: 24),
+                      style: const TextStyle(fontSize: 24),
                     ),
                   ],
                 ),
               );
             } else {
-              return Center(child: Text('Sem dados do clima para exibir.'));
+              return const Center(child: Text('Sem dados do clima para exibir.'));
             }
           } else {
-            return Center(child: Text('Erro ao carregar dados'));
+            return const Center(child: Text('Erro ao carregar dados'));
           }
         },
       ),

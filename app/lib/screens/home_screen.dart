@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'weather_screen.dart';
+import '../services/weather_service.dart';
+import '../models/weather.dart';
+import '../screens/weather_screen.dart';
+import '../storage/city_storage.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,6 +34,28 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   String _selectedCity = '';
+  List<String> favoriteCities = [];
+  Map<String, Weather?> favoriteWeatherData = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorites();
+  }
+
+  Future<void> _loadFavorites() async {
+    final cities = await CityStorage.getFavoriteCities();
+    final Map<String, Weather?> weatherMap = {};
+    for (String city in cities) {
+      final weather = await WeatherService.fetchWeather(city);
+      weatherMap[city] = weather;
+    }
+
+    setState(() {
+      favoriteCities = cities;
+      favoriteWeatherData = weatherMap;
+    });
+  }
 
   void _onSearch() {
     if (_selectedCity.isNotEmpty) {
@@ -39,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
         MaterialPageRoute(
           builder: (context) => WeatherScreen(city: _selectedCity),
         ),
-      );
+      ).then((_) => _loadFavorites());
     }
   }
 
@@ -50,9 +75,10 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.teal,
         title: const Text('Weather App'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+      body: RefreshIndicator(
+        onRefresh: _loadFavorites,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
           children: [
             Autocomplete<String>(
               optionsBuilder: (TextEditingValue textEditingValue) {
@@ -60,7 +86,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   return const Iterable<String>.empty();
                 }
                 return _portugalDistricts.where((String option) {
-                  return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
+                  return option
+                      .toLowerCase()
+                      .contains(textEditingValue.text.toLowerCase());
                 });
               },
               onSelected: (String selection) {
@@ -86,6 +114,33 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: _onSearch,
               child: const Text('Search'),
             ),
+            const SizedBox(height: 30),
+            if (favoriteCities.isNotEmpty)
+              const Text(
+                'Favoritos:',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            const SizedBox(height: 10),
+            ...favoriteCities.map((city) {
+              final weather = favoriteWeatherData[city];
+              return Card(
+                child: ListTile(
+                  title: Text(city),
+                  subtitle: weather != null
+                      ? Text('Temp: ${weather.temp}°C')
+                      : const Text('Sem dados'),
+                  trailing: const Icon(Icons.arrow_forward_ios),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => WeatherScreen(city: city),
+                      ),
+                    ).then((_) => _loadFavorites());
+                  },
+                ),
+              );
+            }).toList(),
           ],
         ),
       ),
