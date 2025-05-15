@@ -3,6 +3,7 @@ import '../services/weather_service.dart';
 import '../models/weather.dart';
 import '../storage/city_storage.dart';
 
+
 class WeatherScreen extends StatefulWidget {
   final String city;
 
@@ -53,7 +54,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Clima em ${widget.city}'),
+        title: Text('Weather in ${widget.city}'),
         backgroundColor: Colors.teal,
         actions: [
           IconButton(
@@ -71,7 +72,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
             return const Center(child: Text('Erro ao carregar dados'));
           } else if (snapshot.hasData) {
             final weather = snapshot.data;
-            print('Icon recebido: ${weather?.icon}');
+            print("Length: ${weather?.hourlyConditions.length}");
             if (weather != null) {
               return Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -109,11 +110,54 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           return const Icon(Icons.cloud_off, size: 100, color: Colors.grey);
                         },
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 30),
                       Text(
-                        'Condições: ${weather.conditions}',
-                        style: const TextStyle(fontSize: 20),
+                        'Hourly forecast',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        height: 130,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: weather.hourlyConditions.length,
+                          itemBuilder: (context, index) {
+                            final hourData = weather.hourlyConditions[index];
+                            return Container(
+                              width: 80,
+                              margin: const EdgeInsets.symmetric(horizontal: 6),
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.teal.shade100.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    hourData.hour,
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Image.network(
+                                    'https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${hourData.icon}.png',
+                                    width: 40,
+                                    height: 40,
+                                    errorBuilder: (_, __, ___) =>
+                                    const Icon(Icons.cloud, size: 40),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    '${hourData.temperature.toStringAsFixed(0)}°',
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
                     ],
                   ),
                 ),
