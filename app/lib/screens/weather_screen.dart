@@ -71,7 +71,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
             return const Center(child: Text('Erro ao carregar dados'));
           } else if (snapshot.hasData) {
             final weather = snapshot.data;
-
+            print('Icon recebido: ${weather?.icon}');
             if (weather != null) {
               return Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -79,9 +79,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.network(
-                      'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/icons2/${weather.icon}.png',
+                      'https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${weather.icon}.png',
                       width: 100,
                       height: 100,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.cloud_off, size: 100, color: Colors.grey);
+                      },
                     ),
                     const SizedBox(height: 20),
                     Text(

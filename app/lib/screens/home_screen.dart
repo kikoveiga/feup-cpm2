@@ -117,27 +117,62 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 30),
             if (favoriteCities.isNotEmpty)
               const Text(
-                'Favoritos:',
+                'Favorites:',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             const SizedBox(height: 10),
             ...favoriteCities.map((city) {
               final weather = favoriteWeatherData[city];
-              return Card(
-                child: ListTile(
-                  title: Text(city),
-                  subtitle: weather != null
-                      ? Text('Temp: ${weather.temp}°C')
-                      : const Text('Sem dados'),
-                  trailing: const Icon(Icons.arrow_forward_ios),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => WeatherScreen(city: city),
-                      ),
-                    ).then((_) => _loadFavorites());
-                  },
+              return InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => WeatherScreen(city: city),
+                    ),
+                  ).then((_) => _loadFavorites());
+                },
+                child: Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              city,
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            if (weather != null)
+                              Text(
+                                '${weather.temp.toStringAsFixed(1)}°C',
+                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            if (weather != null)
+                              Text(
+                                weather.conditions,
+                                style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                              ),
+                            if (weather != null)
+                              Text(
+                                'Max: ${weather.tempmax.toStringAsFixed(1)}°C  Min: ${weather.tempmin.toStringAsFixed(1)}°C',
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               );
             }).toList(),
