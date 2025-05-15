@@ -74,30 +74,52 @@ class _WeatherScreenState extends State<WeatherScreen> {
             print('Icon recebido: ${weather?.icon}');
             if (weather != null) {
               return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.network(
-                      'https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${weather.icon}.png',
-                      width: 100,
-                      height: 100,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.cloud_off, size: 100, color: Colors.grey);
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Temperatura: ${weather.temp}°C',
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                    Text(
-                      'Condições: ${weather.conditions}',
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                  ],
+                padding: const EdgeInsets.all(10.0),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.city,
+                        style: const TextStyle(fontSize: 28),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${weather.temp.toStringAsFixed(1)}°',
+                        style: const TextStyle(fontSize: 42, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        weather.conditions,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Min: ${weather.tempmin.toStringAsFixed(1)}°C  |  Max: ${weather.tempmax.toStringAsFixed(1)}°C',
+                        style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                      ),
+                      const SizedBox(height: 30),
+                      Image.network(
+                        'https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${weather.icon}.png',
+                        width: 100,
+                        height: 100,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.cloud_off, size: 100, color: Colors.grey);
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Condições: ${weather.conditions}',
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
                 ),
               );
+
+
             } else {
               return const Center(child: Text('Sem dados do clima para exibir.'));
             }
