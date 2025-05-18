@@ -101,9 +101,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
             if (weather != null) {
               return Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
+                child: SingleChildScrollView(
+                child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Card(
                         elevation: 4,
@@ -311,6 +313,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   ),
                 ),
 
+                ),
               );
 
             } else {
