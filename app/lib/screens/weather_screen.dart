@@ -307,6 +307,116 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Card(
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.teal.shade100.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      'Pressure',
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    _buildWeatherInfoTile(Icons.speed, '${weather.pressure} hPa', 'Pressure'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Card(
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.teal.shade100.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      'Humidity',
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    _buildWeatherInfoTile(Icons.water_drop, '${weather.humidity}%', 'Humidity'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Card(
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.shade100.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      'Sunset',
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    _buildWeatherInfoTile(Icons.wb_twilight, weather.sunset, 'Sunset'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Card(
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.shade100.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Text(
+                                      'Visibility',
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    _buildWeatherInfoTile(Icons.remove_red_eye, '${weather.visibility} km', 'Visibility'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+
 
 
                     ],

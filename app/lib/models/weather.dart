@@ -16,6 +16,8 @@ class Weather {
   final double uvindex;
   final double windgust;
   final double winddir;
+  final double visibility;
+  final String sunset;
   final List<HourlyCondition> hourlyConditions;
 
   Weather({
@@ -34,6 +36,8 @@ class Weather {
     required this.uvindex,
     required this.windgust,
     required this.winddir,
+    required this.sunset,
+    required this.visibility,
     required this.hourlyConditions,
   });
 
@@ -57,6 +61,8 @@ class Weather {
       uvindex: (day['uvindex'] ?? 0).toDouble(),
       windgust: (day['windgust'] ?? 0).toDouble(),
       winddir: (day['winddir'] ?? 0).toDouble(),
+      visibility: (day['visibility'] ?? 0).toDouble(),
+      sunset: day['sunset'] ?? '',
       hourlyConditions: hours
           .map((hourJson) => HourlyCondition.fromJson(hourJson))
           .toList(),
