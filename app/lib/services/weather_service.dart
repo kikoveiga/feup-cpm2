@@ -16,6 +16,7 @@ class WeatherService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        print('Dados recebidos: $data');
         return Weather.fromJson(data);
       } else {
         print('Erro na resposta: ${response.statusCode}');

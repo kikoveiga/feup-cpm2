@@ -79,88 +79,118 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        widget.city,
-                        style: const TextStyle(fontSize: 28),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '${weather.temp.toStringAsFixed(1)}°',
-                        style: const TextStyle(fontSize: 42, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        weather.conditions,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Min: ${weather.tempmin.toStringAsFixed(1)}°C  |  Max: ${weather.tempmax.toStringAsFixed(1)}°C',
-                        style: const TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-                      ),
-                      const SizedBox(height: 30),
-                      Image.network(
-                        'https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${weather.icon}.png',
-                        width: 100,
-                        height: 100,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.cloud_off, size: 100, color: Colors.grey);
-                        },
-                      ),
-                      const SizedBox(height: 30),
-                      Text(
-                        'Hourly forecast',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        height: 130,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: weather.hourlyConditions.length,
-                          itemBuilder: (context, index) {
-                            final hourData = weather.hourlyConditions[index];
-                            return Container(
-                              width: 80,
-                              margin: const EdgeInsets.symmetric(horizontal: 6),
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.teal.shade100.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
+                      Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      widget.city,
+                                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      '${weather.temp.toStringAsFixed(1)}°C',
+                                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      weather.conditions,
+                                      style: const TextStyle(fontSize: 18),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      'Min: ${weather.tempmin.toStringAsFixed(1)}°  |  Max: ${weather.tempmax.toStringAsFixed(1)}°',
+                                      style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              Image.network(
+                                'https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${weather.icon}.png',
+                                width: 100,
+                                height: 100,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(Icons.cloud_off, size: 80, color: Colors.grey);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      Card(
+                        elevation: 3,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.teal.shade100.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Stack(
+                                alignment: Alignment.centerLeft,
                                 children: [
-                                  Text(
-                                    hourData.hour,
-                                    style: const TextStyle(fontSize: 16),
+                                  Icon(
+                                    Icons.calendar_today,
+                                    size: 20,
                                   ),
-                                  const SizedBox(height: 6),
-                                  Image.network(
-                                    'https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${hourData.icon}.png',
-                                    width: 40,
-                                    height: 40,
-                                    errorBuilder: (_, __, ___) =>
-                                    const Icon(Icons.cloud, size: 40),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    '${hourData.temperature.toStringAsFixed(0)}°',
-                                    style: const TextStyle(fontSize: 16),
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 30.0), // pequeno espaçamento
+                                    child: Text(
+                                      'Hourly forecast',
+                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                 ],
                               ),
-                            );
-                          },
+                              const SizedBox(height: 12),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: weather.hourlyConditions.map((hourData) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                                      child: Column(
+                                        children: [
+                                          Text(hourData.hour, style: const TextStyle(fontSize: 16)),
+                                          const SizedBox(height: 6),
+                                          Image.network(
+                                            'https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${hourData.icon}.png',
+                                            width: 40,
+                                            height: 40,
+                                            errorBuilder: (_, __, ___) => const Icon(Icons.cloud, size: 40),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            '${hourData.temperature.toStringAsFixed(0)}°',
+                                            style: const TextStyle(fontSize: 16),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
 
                     ],
                   ),
                 ),
+
               );
 
 
