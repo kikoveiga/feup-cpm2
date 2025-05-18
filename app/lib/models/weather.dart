@@ -9,6 +9,13 @@ class Weather {
   final double humidity;
   final double pressure;
   final double windspeed;
+  final double precip;
+  final double precipprob;
+  final double precipcover;
+  final List<String> preciptype;
+  final double uvindex;
+  final double windgust;
+  final double winddir;
   final List<HourlyCondition> hourlyConditions;
 
   Weather({
@@ -20,6 +27,13 @@ class Weather {
     required this.humidity,
     required this.pressure,
     required this.windspeed,
+    required this.precip,
+    required this.precipprob,
+    required this.precipcover,
+    required this.preciptype,
+    required this.uvindex,
+    required this.windgust,
+    required this.winddir,
     required this.hourlyConditions,
   });
 
@@ -30,12 +44,19 @@ class Weather {
     return Weather(
       conditions: day['conditions'] ?? '',
       icon: day['icon'] ?? '',
-      temp: day['temp']?.toDouble() ?? 0.0,
-      tempmax: day['tempmax']?.toDouble() ?? 0.0,
-      tempmin: day['tempmin']?.toDouble() ?? 0.0,
-      humidity: day['humidity']?.toDouble() ?? 0.0,
-      pressure: day['pressure']?.toDouble() ?? 0.0,
-      windspeed: day['windspeed']?.toDouble() ?? 0.0,
+      temp: (day['temp'] ?? 0).toDouble(),
+      tempmax: (day['tempmax'] ?? 0).toDouble(),
+      tempmin: (day['tempmin'] ?? 0).toDouble(),
+      humidity: (day['humidity'] ?? 0).toDouble(),
+      pressure: (day['pressure'] ?? 0).toDouble(),
+      windspeed: (day['windspeed'] ?? 0).toDouble(),
+      precip: (day['precip'] ?? 0).toDouble(),
+      precipprob: (day['precipprob'] ?? 0).toDouble(),
+      precipcover: (day['precipcover'] ?? 0).toDouble(),
+      preciptype: (day['preciptype'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      uvindex: (day['uvindex'] ?? 0).toDouble(),
+      windgust: (day['windgust'] ?? 0).toDouble(),
+      winddir: (day['winddir'] ?? 0).toDouble(),
       hourlyConditions: hours
           .map((hourJson) => HourlyCondition.fromJson(hourJson))
           .toList(),
