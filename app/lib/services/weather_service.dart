@@ -10,7 +10,6 @@ class WeatherService {
   static Future<Weather?> fetchWeather(String city) async {
     final today = DateTime.now().toIso8601String().split('T').first;
     final url = '$_baseUrl/$city,PT/$today?include=hours&iconSet=icons2&unitGroup=metric&key=$_apiKey';
-
     try {
       final response = await http.get(Uri.parse(url));
 

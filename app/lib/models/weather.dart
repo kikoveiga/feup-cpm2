@@ -68,4 +68,19 @@ class Weather {
           .toList(),
     );
   }
+
+  double? getCurrentHourTemp() {
+    final now = DateTime.now();
+    final currentHour = "${now.hour.toString().padLeft(2, '0')}h";
+
+    try {
+      final currentCondition = hourlyConditions.firstWhere(
+            (hour) => hour.hour == currentHour,
+      );
+      return currentCondition.temperature;
+    } catch (e) {
+      return null;
+    }
+  }
+
 }

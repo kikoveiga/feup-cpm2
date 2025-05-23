@@ -124,7 +124,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
-                                      '${weather.temp.toStringAsFixed(1)}°C',
+                                      '${weather.getCurrentHourTemp()?.toStringAsFixed(1) ?? "N/A"}°C',
                                       style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(height: 6),

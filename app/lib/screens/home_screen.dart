@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             if (weather != null)
                               Text(
-                                '${weather.temp.toStringAsFixed(1)}°C',
+                                '${weather.getCurrentHourTemp()?.toStringAsFixed(1) ?? "N/A"}°C',
                                 style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                           ],
