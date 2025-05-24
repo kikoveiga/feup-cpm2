@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/weather_service.dart';
 import '../models/weather.dart';
 import '../storage/city_storage.dart';
+import 'next_day_forecast_screen.dart';
 
 String _getWindDirectionName(double degrees) {
   const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
@@ -417,6 +418,28 @@ class _WeatherScreenState extends State<WeatherScreen> {
                       ),
 
 
+                      const SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.calendar_today),
+                        label: const Text('Tomorrow\'s Forecast'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.teal,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        onPressed: () {
+                          final nextDayConditions = weather.getNextDayHourly(); // Ensure this method exists
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => NextDayForecastScreen(
+                                city: widget.city,
+                                nextDayConditions: nextDayConditions,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
 
 
                     ],

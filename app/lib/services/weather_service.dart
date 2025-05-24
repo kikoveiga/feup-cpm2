@@ -8,14 +8,22 @@ class WeatherService {
   static const String _baseUrl = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline';
 
   static Future<Weather?> fetchWeather(String city) async {
-    final today = DateTime.now().toIso8601String().split('T').first;
-    final url = '$_baseUrl/$city,PT/$today?include=hours&iconSet=icons2&unitGroup=metric&key=$_apiKey';
+    final today = DateTime.now();
+    final tomorrow = today.add(Duration(days: 1));
+
+    final todayStr = today.toIso8601String().split('T').first;
+    final tomorrowStr = tomorrow.toIso8601String().split('T').first;
+
+    final url =
+        '$_baseUrl/$city,PT/$todayStr/$tomorrowStr?include=days,hours&iconSet=icons2&unitGroup=metric&key=$_apiKey';
+
     try {
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         print('Dados recebidos: $data');
+
         return Weather.fromJson(data);
       } else {
         print('Erro na resposta: ${response.statusCode}');
@@ -26,4 +34,5 @@ class WeatherService {
       return null;
     }
   }
+
 }

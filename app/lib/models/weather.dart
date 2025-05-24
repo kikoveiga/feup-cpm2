@@ -19,7 +19,7 @@ class Weather {
   final double visibility;
   final String sunset;
   final List<HourlyCondition> hourlyConditions;
-
+  List<HourlyCondition> nextDayHourlyConditions = [];
   Weather({
     required this.conditions,
     required this.icon,
@@ -39,11 +39,23 @@ class Weather {
     required this.sunset,
     required this.visibility,
     required this.hourlyConditions,
+    required this.nextDayHourlyConditions,
   });
 
   factory Weather.fromJson(Map<String, dynamic> json) {
-    final day = json['days'][0];
-    final hours = (day['hours'] as List?) ?? [];
+    final days = json['days'] as List;
+    final day = days[0];
+
+    final todayHours = (days[0]['hours'] as List)
+        .map((h) => HourlyCondition.fromJson(h))
+        .toList();
+
+    List<HourlyCondition> nextDayHours = [];
+    if (days.length > 1) {
+      nextDayHours = (days[1]['hours'] as List)
+          .map((h) => HourlyCondition.fromJson(h))
+          .toList();
+    }
 
     return Weather(
       conditions: day['conditions'] ?? '',
@@ -63,24 +75,29 @@ class Weather {
       winddir: (day['winddir'] ?? 0).toDouble(),
       visibility: (day['visibility'] ?? 0).toDouble(),
       sunset: day['sunset'] ?? '',
-      hourlyConditions: hours
-          .map((hourJson) => HourlyCondition.fromJson(hourJson))
-          .toList(),
+      hourlyConditions: todayHours,
+      nextDayHourlyConditions: nextDayHours,
     );
   }
 
-  double? getCurrentHourTemp() {
-    final now = DateTime.now();
-    final currentHour = "${now.hour.toString().padLeft(2, '0')}h";
 
-    try {
-      final currentCondition = hourlyConditions.firstWhere(
-            (hour) => hour.hour == currentHour,
-      );
-      return currentCondition.temperature;
-    } catch (e) {
-      return null;
-    }
+  double? getCurrentHourTemp() {
+    if (hourlyConditions.isEmpty) return null;
+
+    final now = DateTime.now();
+    final currentHour = now.hour;
+
+    // Try to find the closest hour match
+    final match = hourlyConditions.firstWhere(
+          (cond) => int.tryParse(cond.hour.split(':').first) == currentHour,
+      orElse: () => hourlyConditions.first,
+    );
+
+    return match.temperature;
   }
+
+  List<HourlyCondition> getNextDayHourly() => nextDayHourlyConditions;
+
+
 
 }
