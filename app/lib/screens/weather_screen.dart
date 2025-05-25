@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/gemini_service.dart';
 import '../services/weather_service.dart';
 import '../models/weather.dart';
 import '../storage/city_storage.dart';
@@ -42,12 +43,15 @@ class WeatherScreen extends StatefulWidget {
 class _WeatherScreenState extends State<WeatherScreen> {
   late Future<Weather?> weatherData;
   bool isFavorite = false;
+  String? aiAdvice;
+  final GeminiService geminiService = GeminiService();
 
   @override
   void initState() {
     super.initState();
     weatherData = WeatherService.fetchWeather(widget.city);
     _loadFavoriteStatus();
+    _fetchAIAdvice();
   }
 
   Future<void> _loadFavoriteStatus() async {
@@ -56,6 +60,28 @@ class _WeatherScreenState extends State<WeatherScreen> {
       isFavorite = favorites.contains(widget.city);
     });
   }
+
+  Future<void> _fetchAIAdvice() async {
+    try {
+      final weather = await weatherData;
+      if (weather != null) {
+        final advice = await geminiService.getAIAdviceFromWeather(weather.toJson(),widget.city);
+        setState(() {
+          aiAdvice = advice;
+        });
+      } else {
+        setState(() {
+          aiAdvice = 'Weather data not available.';
+        });
+      }
+    } catch (e) {
+      print('Erro ao obter conselho de IA: $e');
+      setState(() {
+        aiAdvice = 'Não foi possível obter conselho de IA.';
+      });
+    }
+  }
+
 
   Future<void> _toggleFavorite() async {
     if (isFavorite) {
@@ -98,7 +124,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
             return const Center(child: Text('Erro ao carregar dados'));
           } else if (snapshot.hasData) {
             final weather = snapshot.data;
-            print("Length: ${weather?.hourlyConditions.length}");
             if (weather != null) {
               return Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -303,6 +328,38 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   _buildWeatherInfoTile(Icons.blur_on, '${weather.precipcover.toStringAsFixed(0)}%', 'Coverage'),
                                   _buildWeatherInfoTile(Icons.cloud, weather.preciptype.isNotEmpty ? weather.preciptype.first : 'N/A', 'Type'),
                                 ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Card(
+                        elevation: 3,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade100.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: const [
+                                  Icon(Icons.psychology, color: Colors.green),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'AI Advice',
+                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                aiAdvice ?? 'Loading advice...',
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ],
                           ),

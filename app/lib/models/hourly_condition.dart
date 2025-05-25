@@ -22,4 +22,13 @@ class HourlyCondition {
       temperature: json['temp']?.toDouble() ?? 0.0,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'datetime': datetime,
+      'icon': icon,
+      'hour': hour,
+      'temperature': temperature,
+    };
+  }
 }

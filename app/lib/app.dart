@@ -10,6 +10,7 @@ class WeatherApp extends StatelessWidget {
       title: 'Cities Weather',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const HomeScreen(),
+      debugShowCheckedModeBanner: false
     );
   }
 }

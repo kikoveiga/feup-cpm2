@@ -98,6 +98,29 @@ class Weather {
 
   List<HourlyCondition> getNextDayHourly() => nextDayHourlyConditions;
 
-
+  Map<String, dynamic> toJson() {
+    return {
+      'conditions': conditions,
+      'icon': icon,
+      'temp': temp,
+      'tempmax': tempmax,
+      'tempmin': tempmin,
+      'humidity': humidity,
+      'pressure': pressure,
+      'windspeed': windspeed,
+      'precip': precip,
+      'precipprob': precipprob,
+      'precipcover': precipcover,
+      'preciptype': preciptype,
+      'uvindex': uvindex,
+      'windgust': windgust,
+      'winddir': winddir,
+      'visibility': visibility,
+      'sunset': sunset,
+      'hourlyConditions': hourlyConditions.map((e) => e.toJson()).toList(),
+      'nextDayHourlyConditions':
+          nextDayHourlyConditions.map((e) => e.toJson()).toList(),
+    };
+  }
 
 }
