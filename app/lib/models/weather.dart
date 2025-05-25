@@ -44,16 +44,19 @@ class Weather {
 
   factory Weather.fromJson(Map<String, dynamic> json) {
     final days = json['days'] as List;
-    final day = days[0];
 
-    final todayHours = (days[0]['hours'] as List)
-        .map((h) => HourlyCondition.fromJson(h))
+    final day = days[0];
+    final todayDate = day['datetime'];
+
+    final todayHours = (day['hours'] as List)
+        .map((h) => HourlyCondition.fromJson(h, todayDate))
         .toList();
 
     List<HourlyCondition> nextDayHours = [];
     if (days.length > 1) {
+      final nextDate = days[1]['datetime'];
       nextDayHours = (days[1]['hours'] as List)
-          .map((h) => HourlyCondition.fromJson(h))
+          .map((h) => HourlyCondition.fromJson(h, nextDate))
           .toList();
     }
 
@@ -80,24 +83,27 @@ class Weather {
     );
   }
 
-
   double? getCurrentHourTemp() {
     if (hourlyConditions.isEmpty) return null;
 
     final now = DateTime.now();
+    print("Current hour: ${now.hour}");
     final currentHour = now.hour;
 
     // Try to find the closest hour match
     final match = hourlyConditions.firstWhere(
-          (cond) => int.tryParse(cond.hour.split(':').first) == currentHour,
+      (cond) {
+        final parsed = DateTime.tryParse(cond.datetime);
+        print("Parsed datetime: ${cond.datetime} -> $parsed");
+        return parsed != null && parsed.hour == currentHour;
+      },
       orElse: () => hourlyConditions.first,
     );
-
+    
+    print("Current Hour: ${now.hour}, Match Hour: ${match.hour}");
     return match.temperature;
   }
 
   List<HourlyCondition> getNextDayHourly() => nextDayHourlyConditions;
-
-
 
 }
