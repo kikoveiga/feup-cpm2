@@ -11,15 +11,17 @@ class HourlyCondition {
     required this.temperature,
   });
 
-  factory HourlyCondition.fromJson(Map<String, dynamic> json) {
-    final datetime = json['datetime'] ?? '';
-    final hour = datetime.split(':')[0] + 'h';
+  factory HourlyCondition.fromJson(Map<String, dynamic> json, String parentDate) {
+    final time = json['datetime'] ?? '';
+    final fullDateTime = '$parentDate $time';
+
+    final hour = time.split(':')[0] + 'h';
 
     return HourlyCondition(
-      datetime: datetime, // <-- Store it here
+      datetime: fullDateTime,
       icon: json['icon'] ?? '',
       hour: hour,
-      temperature: json['temp']?.toDouble() ?? 0.0,
+      temperature: (json['temp'] ?? 0).toDouble()
     );
   }
 

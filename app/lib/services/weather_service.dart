@@ -4,7 +4,7 @@ import '../models/weather.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class WeatherService {
-  static String _apiKey = dotenv.env['API_KEY']!;
+  static final String _apiKey = dotenv.env['API_KEY']!;
   static const String _baseUrl = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline';
 
   static Future<Weather?> fetchWeather(String city) async {
