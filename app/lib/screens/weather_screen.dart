@@ -4,6 +4,8 @@ import '../services/weather_service.dart';
 import '../models/weather.dart';
 import '../storage/city_storage.dart';
 import 'next_day_forecast_screen.dart';
+import '../widgets/weekly_temp_chart.dart';
+import '../models/daily_weather.dart';
 
 String _getWindDirectionName(double degrees) {
   const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
@@ -42,6 +44,7 @@ class WeatherScreen extends StatefulWidget {
 
 class _WeatherScreenState extends State<WeatherScreen> {
   late Future<Weather?> weatherData;
+  late Future<List<DailyWeather>> weeklyData;
   bool isFavorite = false;
   String? aiAdvice;
   final GeminiService geminiService = GeminiService();
@@ -50,6 +53,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   void initState() {
     super.initState();
     weatherData = WeatherService.fetchWeather(widget.city);
+    weeklyData = WeatherService.fetchWeeklyWeather(widget.city);
     _loadFavoriteStatus();
     _fetchAIAdvice();
   }
@@ -498,6 +502,36 @@ class _WeatherScreenState extends State<WeatherScreen> {
                         },
                       ),
 
+                      const SizedBox(height: 20),
+                      FutureBuilder<List<DailyWeather>>(
+                        future: weeklyData,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: CircularProgressIndicator());
+                          } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                            return const Center(child: Text('Erro ao carregar dados da semana.'));
+                          }
+
+                          return Card(
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Temperature Evolution (Last 7 Days)',
+                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  SizedBox(height: 250, child: WeeklyTempChart(data: snapshot.data!)),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
 
                     ],
                   ),
