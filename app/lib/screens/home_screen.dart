@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black12,
+                        color: Colors.blue,
                         blurRadius: 4,
                         offset: Offset(0, 2),
                       ),
@@ -210,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black26,
+                          color: Colors.black12,
                           blurRadius: 4,
                           offset: Offset(0, 2),
                         ),

@@ -69,7 +69,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
     try {
       final weather = await weatherData;
       if (weather != null) {
-        final advice = await geminiService.getAIAdviceFromWeather(weather.toJson(),widget.city);
+        final advice = await geminiService.getAIAdviceFromWeather(
+          weather.toJson(),
+          widget.city,
+        );
         setState(() {
           aiAdvice = advice;
         });
@@ -86,7 +89,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
   }
 
-
   Future<void> _toggleFavorite() async {
     if (isFavorite) {
       await CityStorage.removeCity(widget.city);
@@ -99,9 +101,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(isFavorite
-            ? '${widget.city} adicionada aos favoritos'
-            : '${widget.city} removida dos favoritos'),
+        content: Text(
+          isFavorite
+              ? '${widget.city} adicionada aos favoritos'
+              : '${widget.city} removida dos favoritos',
+        ),
       ),
     );
   }
@@ -111,13 +115,21 @@ class _WeatherScreenState extends State<WeatherScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Weather in ${widget.city}'),
-        backgroundColor: Colors.teal,
         actions: [
           IconButton(
             icon: Icon(isFavorite ? Icons.star : Icons.star_border),
             onPressed: _toggleFavorite,
           ),
         ],
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF00838F), Color(0xFF4DD0E1)], // tons de teal
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: FutureBuilder<Weather?>(
         future: weatherData,
@@ -129,19 +141,37 @@ class _WeatherScreenState extends State<WeatherScreen> {
           } else if (snapshot.hasData) {
             final weather = snapshot.data;
             if (weather != null) {
-              return Padding(
-                padding: const EdgeInsets.all(10.0),
+              return Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xFFE0F7FA), Color(0xFFB2EBF2)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
                 child: SingleChildScrollView(
-                child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Card(
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Colors.lightBlue,
+                              width: 2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.blue,
+                                blurRadius: 2,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(16),
                           child: Row(
                             children: [
                               Expanded(
@@ -150,12 +180,18 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   children: [
                                     Text(
                                       widget.city,
-                                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
                                       '${weather.getCurrentHourTemp()?.toStringAsFixed(1) ?? "N/A"}°C',
-                                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                                      style: const TextStyle(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
@@ -165,7 +201,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                     const SizedBox(height: 6),
                                     Text(
                                       'Min: ${weather.tempmin.toStringAsFixed(1)}°  |  Max: ${weather.tempmax.toStringAsFixed(1)}°',
-                                      style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontStyle: FontStyle.italic,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -175,373 +214,547 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                 width: 100,
                                 height: 100,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(Icons.cloud_off, size: 80, color: Colors.grey);
+                                  return const Icon(
+                                    Icons.cloud_off,
+                                    size: 80,
+                                    color: Colors.grey,
+                                  );
                                 },
                               ),
                             ],
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      Card(
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.teal.shade100.withOpacity(0.2),
+
+                        const SizedBox(height: 20),
+                        Card(
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding: const EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Stack(
-                                alignment: Alignment.centerLeft,
-                                children: [
-                                  // Ícone decorativo por trás
-                                  Icon(
-                                    Icons.calendar_today,
-                                    size: 20,
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 30.0),
-                                    child: Text(
-                                      'Hourly forecast',
-                                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: weather.hourlyConditions.map((hourData) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                                      child: Column(
-                                        children: [
-                                          Text(hourData.hour, style: const TextStyle(fontSize: 16)),
-                                          const SizedBox(height: 6),
-                                          Image.network(
-                                            'https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${hourData.icon}.png',
-                                            width: 40,
-                                            height: 40,
-                                            errorBuilder: (_, __, ___) => const Icon(Icons.cloud, size: 40),
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            '${hourData.temperature.toStringAsFixed(0)}°',
-                                            style: const TextStyle(fontSize: 16),
-                                          ),
-                                        ],
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.teal.shade100.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Stack(
+                                  alignment: Alignment.centerLeft,
+                                  children: [
+                                    Icon(Icons.calendar_today, size: 20),
+                                    const Padding(
+                                      padding: EdgeInsets.only(left: 30.0),
+                                      child: Text(
+                                        'Hourly forecast',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    );
-                                  }).toList(),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 12),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children:
+                                        weather.hourlyConditions.map((
+                                          hourData,
+                                        ) {
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  hourData.hour,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 6),
+                                                Image.network(
+                                                  'https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${hourData.icon}.png',
+                                                  width: 40,
+                                                  height: 40,
+                                                  errorBuilder:
+                                                      (_, __, ___) =>
+                                                          const Icon(
+                                                            Icons.cloud,
+                                                            size: 40,
+                                                          ),
+                                                ),
+                                                const SizedBox(height: 6),
+                                                Text(
+                                                  '${hourData.temperature.toStringAsFixed(0)}°',
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }).toList(),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      Card(
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.teal.shade100.withOpacity(0.2),
+                        const SizedBox(height: 20),
+                        Card(
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Wind',
-                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  Column(
-                                    children: [
-                                      const Icon(Icons.air, size: 28, color: Colors.teal),
-                                      const SizedBox(height: 4),
-                                      Text('${weather.windspeed} km/h', style: const TextStyle(fontWeight: FontWeight.bold)),
-                                      const Text('Speed', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                                    ],
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.teal.shade100.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Wind',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  Column(
-                                    children: [
-                                      const Icon(Icons.bolt, size: 28, color: Colors.teal),
-                                      const SizedBox(height: 4),
-                                      Text('${weather.windgust} km/h', style: const TextStyle(fontWeight: FontWeight.bold)),
-                                      const Text('Gust', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                                    ],
-                                  ),
-                                  Column(
-                                    children: [
-                                      Transform.rotate(
-                                        angle: weather.winddir * (3.1416 / 180),
-                                        child: const Icon(Icons.explore, size: 28, color: Colors.teal),
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        const Icon(
+                                          Icons.air,
+                                          size: 28,
+                                          color: Colors.teal,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${weather.windspeed} km/h',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const Text(
+                                          'Speed',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        const Icon(
+                                          Icons.bolt,
+                                          size: 28,
+                                          color: Colors.teal,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${weather.windgust} km/h',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const Text(
+                                          'Gust',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        Transform.rotate(
+                                          angle:
+                                              weather.winddir * (3.1416 / 180),
+                                          child: const Icon(
+                                            Icons.explore,
+                                            size: 28,
+                                            color: Colors.teal,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${weather.winddir.toStringAsFixed(0)}°',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Text(
+                                          _getWindDirectionName(
+                                            weather.winddir,
+                                          ),
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+                        Card(
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.teal.shade100.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: const [
+                                    Icon(Icons.grain, color: Colors.teal),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Precipitation',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      const SizedBox(height: 4),
-                                      Text('${weather.winddir.toStringAsFixed(0)}°', style: const TextStyle(fontWeight: FontWeight.bold)),
-                                      Text(_getWindDirectionName(weather.winddir),
-                                          style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    _buildWeatherInfoTile(
+                                      Icons.water_drop,
+                                      '${weather.precip} mm',
+                                      'Amount',
+                                    ),
+                                    _buildWeatherInfoTile(
+                                      Icons.percent,
+                                      '${weather.precipprob.toStringAsFixed(0)}%',
+                                      'Probability',
+                                    ),
+                                    _buildWeatherInfoTile(
+                                      Icons.blur_on,
+                                      '${weather.precipcover.toStringAsFixed(0)}%',
+                                      'Coverage',
+                                    ),
+                                    _buildWeatherInfoTile(
+                                      Icons.cloud,
+                                      weather.preciptype.isNotEmpty
+                                          ? weather.preciptype.first
+                                          : 'N/A',
+                                      'Type',
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Card(
+                          elevation: 3,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade100.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: const [
+                                    Icon(Icons.psychology, color: Colors.green),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'AI Advice',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  aiAdvice ?? 'Loading advice...',
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Card(
+                                elevation: 3,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.teal.shade100.withOpacity(
+                                      0.2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        'Pressure',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      _buildWeatherInfoTile(
+                                        Icons.speed,
+                                        '${weather.pressure} hPa',
+                                        'Pressure',
+                                      ),
                                     ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-                      Card(
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.teal.shade100.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: const [
-                                  Icon(Icons.grain, color: Colors.teal),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Precipitation',
-                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Card(
+                                elevation: 3,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.teal.shade100.withOpacity(
+                                      0.2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  _buildWeatherInfoTile(Icons.water_drop, '${weather.precip} mm', 'Amount'),
-                                  _buildWeatherInfoTile(Icons.percent, '${weather.precipprob.toStringAsFixed(0)}%', 'Probability'),
-                                  _buildWeatherInfoTile(Icons.blur_on, '${weather.precipcover.toStringAsFixed(0)}%', 'Coverage'),
-                                  _buildWeatherInfoTile(Icons.cloud, weather.preciptype.isNotEmpty ? weather.preciptype.first : 'N/A', 'Type'),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Card(
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.green.shade100.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: const [
-                                  Icon(Icons.psychology, color: Colors.green),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'AI Advice',
-                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        'Humidity',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      _buildWeatherInfoTile(
+                                        Icons.water_drop,
+                                        '${weather.humidity}%',
+                                        'Humidity',
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
-                              const SizedBox(height: 12),
-                              Text(
-                                aiAdvice ?? 'Loading advice...',
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Card(
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.teal.shade100.withOpacity(0.2),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Card(
+                                elevation: 3,
+                                shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      'Pressure',
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.shade100.withOpacity(
+                                      0.2,
                                     ),
-                                    const SizedBox(height: 8),
-                                    _buildWeatherInfoTile(Icons.speed, '${weather.pressure} hPa', 'Pressure'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Card(
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.teal.shade100.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      'Humidity',
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    _buildWeatherInfoTile(Icons.water_drop, '${weather.humidity}%', 'Humidity'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Card(
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.shade100.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      'Sunset',
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    _buildWeatherInfoTile(Icons.wb_twilight, weather.sunset, 'Sunset'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Card(
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.blue.shade100.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      'Visibility',
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    _buildWeatherInfoTile(Icons.remove_red_eye, '${weather.visibility} km', 'Visibility'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-
-                      const SizedBox(height: 20),
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.calendar_today),
-                        label: const Text('Tomorrow\'s Forecast'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                        onPressed: () {
-                          final nextDayConditions = weather.getNextDayHourly(); // Ensure this method exists
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => NextDayForecastScreen(
-                                city: widget.city,
-                                nextDayConditions: nextDayConditions,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-
-                      const SizedBox(height: 20),
-                      FutureBuilder<List<DailyWeather>>(
-                        future: weeklyData,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-                            return const Center(child: Text('Erro ao carregar dados da semana.'));
-                          }
-
-                          return Card(
-                            elevation: 3,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Temperature Evolution (Last 7 Days)',
-                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                    borderRadius: BorderRadius.circular(12),
                                   ),
-                                  const SizedBox(height: 12),
-                                  SizedBox(height: 250, child: WeeklyTempChart(data: snapshot.data!)),
-                                ],
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        'Sunset',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      _buildWeatherInfoTile(
+                                        Icons.wb_twilight,
+                                        weather.sunset,
+                                        'Sunset',
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                          );
-                        },
-                      ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Card(
+                                elevation: 3,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.shade100.withOpacity(
+                                      0.2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        'Visibility',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      _buildWeatherInfoTile(
+                                        Icons.remove_red_eye,
+                                        '${weather.visibility} km',
+                                        'Visibility',
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
 
-                    ],
+                        const SizedBox(height: 20),
+                        ElevatedButton.icon(
+                          icon: const Icon(Icons.calendar_today),
+                          label: const Text('Tomorrow\'s Forecast'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          onPressed: () {
+                            final nextDayConditions =
+                                weather
+                                    .getNextDayHourly(); // Ensure this method exists
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => NextDayForecastScreen(
+                                      city: widget.city,
+                                      nextDayConditions: nextDayConditions,
+                                    ),
+                              ),
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 20),
+                        FutureBuilder<List<DailyWeather>>(
+                          future: weeklyData,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (snapshot.hasError ||
+                                !snapshot.hasData ||
+                                snapshot.data!.isEmpty) {
+                              return const Center(
+                                child: Text(
+                                  'Erro ao carregar dados da semana.',
+                                ),
+                              );
+                            }
+
+                            return Card(
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Temperature Evolution (Last 7 Days)',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    SizedBox(
+                                      height: 250,
+                                      child: WeeklyTempChart(
+                                        data: snapshot.data!,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-
-                ),
               );
-
             } else {
-              return const Center(child: Text('Sem dados do clima para exibir.'));
+              return const Center(
+                child: Text('Sem dados do clima para exibir.'),
+              );
             }
           } else {
             return const Center(child: Text('Erro ao carregar dados'));
