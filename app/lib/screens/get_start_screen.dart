@@ -10,7 +10,7 @@ class GetStartedScreen extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF80DEEA), Color(0xFF00695C)],
+            colors: [Color(0xFFE0F7FA), Color(0xFF80DEEA)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -39,7 +39,7 @@ class GetStartedScreen extends StatelessWidget {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFe68d30),
-                    foregroundColor: Colors.teal,
+                    foregroundColor: Color(0xFF80DEEA),
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
                   ),
                   onPressed: () {
