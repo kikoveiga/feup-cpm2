@@ -255,12 +255,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.lightBlue),
+                        border: Border.all(color: Colors.black12),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.blue,
-                            blurRadius: 4,
-                            offset: Offset(0, 3),
+                            blurRadius: 2,
+                            offset: Offset(0, 2),
                           ),
                         ],
                       ),
