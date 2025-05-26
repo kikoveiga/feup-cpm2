@@ -87,20 +87,17 @@ class Weather {
     if (hourlyConditions.isEmpty) return null;
 
     final now = DateTime.now();
-    print("Current hour: ${now.hour}");
     final currentHour = now.hour;
 
     // Try to find the closest hour match
     final match = hourlyConditions.firstWhere(
       (cond) {
         final parsed = DateTime.tryParse(cond.datetime);
-        print("Parsed datetime: ${cond.datetime} -> $parsed");
         return parsed != null && parsed.hour == currentHour;
       },
       orElse: () => hourlyConditions.first,
     );
     
-    print("Current Hour: ${now.hour}, Match Hour: ${match.hour}");
     return match.temperature;
   }
 

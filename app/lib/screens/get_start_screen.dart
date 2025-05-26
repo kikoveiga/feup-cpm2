@@ -21,10 +21,7 @@ class GetStartedScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  'assets/logo.png',
-                  height: 200,
-                ),
+                Image.asset('assets/logo.png', height: 200),
                 const Text(
                   "Clear skies, clear choices.",
                   style: TextStyle(
@@ -40,7 +37,10 @@ class GetStartedScreen extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFe68d30),
                     foregroundColor: Color(0xFF80DEEA),
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 14,
+                    ),
                   ),
                   onPressed: () {
                     Navigator.pushReplacement(
@@ -48,7 +48,10 @@ class GetStartedScreen extends StatelessWidget {
                       MaterialPageRoute(builder: (_) => const HomeScreen()),
                     );
                   },
-                  child: const Text('Get Started', style: TextStyle(fontSize: 18)),
+                  child: const Text(
+                    'Get Started',
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
               ],
             ),

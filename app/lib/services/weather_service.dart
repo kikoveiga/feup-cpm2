@@ -6,7 +6,8 @@ import '../models/daily_weather.dart';
 
 class WeatherService {
   static final String _apiKey = dotenv.env['API_KEY']!;
-  static const String _baseUrl = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline';
+  static const String _baseUrl =
+      'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline';
 
   static Future<Weather?> fetchWeather(String city) async {
     final today = DateTime.now();
@@ -23,15 +24,11 @@ class WeatherService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print('Dados recebidos: $data');
-
         return Weather.fromJson(data);
       } else {
-        print('Erro na resposta: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Erro ao buscar clima: $e');
       return null;
     }
   }
@@ -54,13 +51,10 @@ class WeatherService {
         final List<dynamic> days = data['days'];
         return days.map((d) => DailyWeather.fromJson(d)).toList();
       } else {
-        print('Erro na resposta da semana: ${response.statusCode}');
         return [];
       }
     } catch (e) {
-      print('Erro ao buscar clima semanal: $e');
       return [];
     }
   }
-
 }

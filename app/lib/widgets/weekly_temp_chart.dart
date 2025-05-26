@@ -28,9 +28,7 @@ class WeeklyTempChart extends StatelessWidget {
               },
             ),
           ),
-          rightTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false), // desativa eixo Y direito
-          ),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -47,24 +45,28 @@ class WeeklyTempChart extends StatelessWidget {
               },
             ),
           ),
-          topTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false), // desativa eixo X superior
-          ),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
         lineBarsData: [
           LineChartBarData(
-            spots: data.asMap().entries
-                .map((e) => FlSpot(e.key.toDouble(), e.value.tempMax))
-                .toList(),
+            spots:
+                data
+                    .asMap()
+                    .entries
+                    .map((e) => FlSpot(e.key.toDouble(), e.value.tempMax))
+                    .toList(),
             isCurved: true,
             color: Colors.red,
             barWidth: 3,
             dotData: FlDotData(show: true),
           ),
           LineChartBarData(
-            spots: data.asMap().entries
-                .map((e) => FlSpot(e.key.toDouble(), e.value.tempMin))
-                .toList(),
+            spots:
+                data
+                    .asMap()
+                    .entries
+                    .map((e) => FlSpot(e.key.toDouble(), e.value.tempMin))
+                    .toList(),
             isCurved: true,
             color: Colors.blue,
             barWidth: 3,

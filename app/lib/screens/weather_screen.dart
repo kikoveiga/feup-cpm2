@@ -13,7 +13,12 @@ String _getWindDirectionName(double degrees) {
   return directions[index];
 }
 
-Widget _buildWeatherInfoTile(IconData icon, String value, String label, {required MaterialColor iconColor}) {
+Widget _buildWeatherInfoTile(
+  IconData icon,
+  String value,
+  String label, {
+  required MaterialColor iconColor,
+}) {
   return Column(
     mainAxisSize: MainAxisSize.min,
     children: [
@@ -82,9 +87,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
         });
       }
     } catch (e) {
-      print('Erro ao obter conselho de IA: $e');
       setState(() {
-        aiAdvice = 'Não foi possível obter conselho de IA.';
+        aiAdvice = 'It was not possible to get AI advice.';
       });
     }
   }
@@ -103,8 +107,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
       SnackBar(
         content: Text(
           isFavorite
-              ? '${widget.city} adicionada aos favoritos'
-              : '${widget.city} removida dos favoritos',
+              ? '${widget.city} added to favorites'
+              : '${widget.city} removed from favorites',
         ),
       ),
     );
@@ -124,7 +128,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF00838F), Color(0xFF4DD0E1)], // tons de teal
+              colors: [Color(0xFF00838F), Color(0xFF4DD0E1)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -137,7 +141,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return const Center(child: Text('Erro ao carregar dados'));
+            return const Center(child: Text('Error loading weather data'));
           } else if (snapshot.hasData) {
             final weather = snapshot.data;
             if (weather != null) {
@@ -232,10 +236,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           elevation: 3,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(
-                              color: Colors.black12,
-                              width: 1,
-                            ),
+                            side: BorderSide(color: Colors.black12, width: 1),
                           ),
                           child: Container(
                             decoration: BoxDecoration(
@@ -273,34 +274,45 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                 SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
                                   child: Row(
-                                    children: weather.hourlyConditions.map((hourData) {
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              hourData.hour,
-                                              style: const TextStyle(fontSize: 16),
+                                    children:
+                                        weather.hourlyConditions.map((
+                                          hourData,
+                                        ) {
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
                                             ),
-                                            const SizedBox(height: 6),
-                                            Image.network(
-                                              'https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${hourData.icon}.png',
-                                              width: 40,
-                                              height: 40,
-                                              errorBuilder: (_, __, ___) => const Icon(
-                                                Icons.cloud,
-                                                size: 40,
-                                              ),
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  hourData.hour,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 6),
+                                                Image.network(
+                                                  'https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${hourData.icon}.png',
+                                                  width: 40,
+                                                  height: 40,
+                                                  errorBuilder:
+                                                      (_, __, ___) =>
+                                                          const Icon(
+                                                            Icons.cloud,
+                                                            size: 40,
+                                                          ),
+                                                ),
+                                                const SizedBox(height: 6),
+                                                Text(
+                                                  '${hourData.temperature.toStringAsFixed(0)}°',
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            const SizedBox(height: 6),
-                                            Text(
-                                              '${hourData.temperature.toStringAsFixed(0)}°',
-                                              style: const TextStyle(fontSize: 16),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }).toList(),
+                                          );
+                                        }).toList(),
                                   ),
                                 ),
                               ],
@@ -314,10 +326,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           elevation: 3,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(
-                              color: Colors.black12,
-                              width: 1,
-                            ),
+                            side: BorderSide(color: Colors.black12, width: 1),
                           ),
                           child: Container(
                             decoration: BoxDecoration(
@@ -338,7 +347,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: const [
-                                    Icon(Icons.wind_power, color: Colors.lightBlue),
+                                    Icon(
+                                      Icons.wind_power,
+                                      color: Colors.lightBlue,
+                                    ),
                                     SizedBox(width: 8),
                                     Text(
                                       'Wind',
@@ -351,7 +363,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                 ),
                                 const SizedBox(height: 16),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   children: [
                                     Column(
                                       children: [
@@ -402,7 +415,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                     Column(
                                       children: [
                                         Transform.rotate(
-                                          angle: weather.winddir * (3.1416 / 180),
+                                          angle:
+                                              weather.winddir * (3.1416 / 180),
                                           child: const Icon(
                                             Icons.explore,
                                             size: 28,
@@ -417,7 +431,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                           ),
                                         ),
                                         Text(
-                                          _getWindDirectionName(weather.winddir),
+                                          _getWindDirectionName(
+                                            weather.winddir,
+                                          ),
                                           style: const TextStyle(
                                             fontSize: 12,
                                             color: Colors.grey,
@@ -446,7 +462,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           ),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.white, // fundo branco
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: const [
                                 BoxShadow(
@@ -462,7 +478,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    const Icon(Icons.grain, color: Colors.lightBlue),
+                                    const Icon(
+                                      Icons.grain,
+                                      color: Colors.lightBlue,
+                                    ),
                                     const SizedBox(width: 8),
                                     const Text(
                                       'Precipitation',
@@ -475,7 +494,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                 ),
                                 const SizedBox(height: 12),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   children: [
                                     _buildWeatherInfoTile(
                                       Icons.water_drop,
@@ -497,7 +517,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                     ),
                                     _buildWeatherInfoTile(
                                       Icons.cloud,
-                                      weather.preciptype.isNotEmpty ? weather.preciptype.first : 'N/A',
+                                      weather.preciptype.isNotEmpty
+                                          ? weather.preciptype.first
+                                          : 'N/A',
                                       'Type',
                                       iconColor: Colors.lightBlue,
                                     ),
@@ -541,7 +563,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               children: [
                                 Row(
                                   children: const [
-                                    Icon(Icons.psychology, color: Colors.blueAccent),
+                                    Icon(
+                                      Icons.psychology,
+                                      color: Colors.blueAccent,
+                                    ),
                                     SizedBox(width: 8),
                                     Text(
                                       'AI Advice',
@@ -589,7 +614,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   ),
                                   padding: const EdgeInsets.all(16),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       const Text(
                                         'Pressure',
@@ -635,7 +661,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   ),
                                   padding: const EdgeInsets.all(16),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       const Text(
                                         'Humidity',
@@ -685,7 +712,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   ),
                                   padding: const EdgeInsets.all(16),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       const Text(
                                         'Sunset',
@@ -731,7 +759,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   ),
                                   padding: const EdgeInsets.all(16),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       const Text(
                                         'Visibility',
@@ -755,7 +784,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           ],
                         ),
 
-
                         const SizedBox(height: 20),
                         Container(
                           decoration: BoxDecoration(
@@ -764,7 +792,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
-                            borderRadius: BorderRadius.circular(12), // match button radius
+                            borderRadius: BorderRadius.circular(12),
                             boxShadow: const [
                               BoxShadow(
                                 color: Colors.blue,
@@ -777,28 +805,29 @@ class _WeatherScreenState extends State<WeatherScreen> {
                             icon: const Icon(Icons.calendar_today),
                             label: const Text('Tomorrow\'s Forecast'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent, // make button background transparent
-                              shadowColor: Colors.transparent,     // remove button shadow (optional)
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
                             onPressed: () {
-                              final nextDayConditions = weather.getNextDayHourly();
+                              final nextDayConditions =
+                                  weather.getNextDayHourly();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => NextDayForecastScreen(
-                                    city: widget.city,
-                                    nextDayConditions: nextDayConditions,
-                                  ),
+                                  builder:
+                                      (_) => NextDayForecastScreen(
+                                        city: widget.city,
+                                        nextDayConditions: nextDayConditions,
+                                      ),
                                 ),
                               );
                             },
                           ),
                         ),
-
 
                         const SizedBox(height: 20),
                         FutureBuilder<List<DailyWeather>>(
@@ -813,9 +842,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                 !snapshot.hasData ||
                                 snapshot.data!.isEmpty) {
                               return const Center(
-                                child: Text(
-                                  'Erro ao carregar dados da semana.',
-                                ),
+                                child: Text('Error loading weekly data'),
                               );
                             }
 
@@ -862,7 +889,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                 ),
                               ),
                             );
-
                           },
                         ),
                       ],
@@ -871,12 +897,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 ),
               );
             } else {
-              return const Center(
-                child: Text('Sem dados do clima para exibir.'),
-              );
+              return const Center(child: Text('No weather data available'));
             }
           } else {
-            return const Center(child: Text('Erro ao carregar dados'));
+            return const Center(child: Text('Error loading weather data'));
           }
         },
       ),
