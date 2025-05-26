@@ -70,113 +70,232 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.teal,
-        title: const Text('Weather App'),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF80DEEA), Color(0xFF00695C)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
       ),
-      body: RefreshIndicator(
-        onRefresh: _loadFavorites,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            Autocomplete<String>(
-              optionsBuilder: (TextEditingValue textEditingValue) {
-                if (textEditingValue.text == '') {
-                  return const Iterable<String>.empty();
-                }
-                return _portugalDistricts.where((String option) {
-                  return option
-                      .toLowerCase()
-                      .contains(textEditingValue.text.toLowerCase());
-                });
-              },
-              onSelected: (String selection) {
-                setState(() {
-                  _selectedCity = selection;
-                });
-              },
-              fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
-                return TextField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  onSubmitted: (_) => _onSearch(),
-                  decoration: InputDecoration(
-                    hintText: 'Search for a city',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: true,
+          title: Image.asset('assets/logo.png', height: 80),
+        ),
+        body: RefreshIndicator(
+          onRefresh: _loadFavorites,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              const SizedBox(height: 20),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF4DD0E1), Color(0xFF004D40)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
                   ),
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _onSearch,
-              child: const Text('Search'),
-            ),
-            const SizedBox(height: 30),
-            if (favoriteCities.isNotEmpty)
-              const Text(
-                'Favorites:',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            const SizedBox(height: 10),
-            ...favoriteCities.map((city) {
-              final weather = favoriteWeatherData[city];
-              return InkWell(
-                onTap: () {
-                  Navigator.push(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Autocomplete<String>(
+                  optionsBuilder: (TextEditingValue textEditingValue) {
+                    if (textEditingValue.text.isEmpty) {
+                      return const Iterable<String>.empty();
+                    }
+                    return _portugalDistricts.where(
+                      (option) => option.toLowerCase().contains(
+                        textEditingValue.text.toLowerCase(),
+                      ),
+                    );
+                  },
+                  onSelected: (selection) {
+                    setState(() {
+                      _selectedCity = selection;
+                    });
+                  },
+                  fieldViewBuilder: (
                     context,
-                    MaterialPageRoute(
-                      builder: (_) => WeatherScreen(city: city),
-                    ),
-                  ).then((_) => _loadFavorites());
-                },
-                child: Card(
-                  elevation: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              city,
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            if (weather != null)
-                              Text(
-                                '${weather.getCurrentHourTemp()?.toStringAsFixed(1) ?? "N/A"}°C',
-                                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                          ],
+                    controller,
+                    focusNode,
+                    onFieldSubmitted,
+                  ) {
+                    return TextField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      onSubmitted: (_) => _onSearch(),
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: 'Search for a city',
+                        hintStyle: const TextStyle(color: Colors.white70),
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: Colors.white,
                         ),
-                        const SizedBox(height: 4),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            if (weather != null)
-                              Text(
-                                weather.conditions,
-                                style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-                              ),
-                            if (weather != null)
-                              Text(
-                                'Max: ${weather.tempmax.toStringAsFixed(1)}°C  Min: ${weather.tempmin.toStringAsFixed(1)}°C',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                          ],
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.all(16),
+                      ),
+                    );
+                  },
+                  optionsViewBuilder: (context, onSelected, options) {
+                    const double itemHeight = 48.0;
+                    final double height = (options.length * itemHeight).clamp(
+                      0,
+                      itemHeight * 5,
+                    );
+
+                    return Align(
+                      alignment: Alignment.topLeft,
+                      child: Material(
+                        color: const Color(0xFF004D40),
+                        elevation: 4,
+                        child: SizedBox(
+                          height: height,
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: options.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final String option = options.elementAt(index);
+                              return InkWell(
+                                onTap: () {
+                                  onSelected(option);
+                                },
+                                child: Container(
+                                  height: itemHeight,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    option,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _onSearch,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF004D40),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: const Text('Search', style: TextStyle(fontSize: 16)),
+              ),
+              const SizedBox(height: 30),
+              if (favoriteCities.isNotEmpty)
+                const Text(
+                  'Favorites:',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              const SizedBox(height: 10),
+              ...favoriteCities.map((city) {
+                final weather = favoriteWeatherData[city];
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => WeatherScreen(city: city),
+                      ),
+                    ).then((_) => _loadFavorites());
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF4DD0E1), Color(0xFF004D40)],
+                        begin: Alignment.bottomLeft,
+                        end: Alignment.topRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 6,
+                          offset: Offset(0, 3),
                         ),
                       ],
                     ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                city,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              if (weather != null)
+                                Text(
+                                  '${weather.getCurrentHourTemp()?.toStringAsFixed(1) ?? "N/A"}°C',
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              if (weather != null)
+                                Text(
+                                  weather.conditions,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                              if (weather != null)
+                                Text(
+                                  'Max: ${weather.tempmax.toStringAsFixed(1)}°C  Min: ${weather.tempmin.toStringAsFixed(1)}°C',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              );
-            }),
-          ],
+                );
+              }).toList(),
+            ],
+          ),
         ),
       ),
     );

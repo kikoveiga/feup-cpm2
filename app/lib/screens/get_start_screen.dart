@@ -38,7 +38,7 @@ class GetStartedScreen extends StatelessWidget {
                 const SizedBox(height: 70),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: Color(0xFFe68d30),
                     foregroundColor: Colors.teal,
                     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
                   ),
