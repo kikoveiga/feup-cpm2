@@ -13,8 +13,20 @@ This is a brief overview of the project. For more details, please check the [rep
 ## Execution
 
 To run the project, you need to have Flutter installed on your machine.
-Then, you can run the different versions of the app on Android Studio.
+Then, you can run the app via Android Studio on an emulator or a real device.
 
 ## Main Features
 
 - **District Selection**: Users can select a district to view its weather information.
+- **Current Weather**: Displays temperature, humidity, wind, pressure, and more.
+- **Next-Day Forecast**: Shows a forecast for the following day with hourly breakdown.
+- **Favorites List**: Users can save favorite cities for quick access.
+- **Historical Data Visualization**: Weekly temperature trends are shown in a chart.
+- **AI Advice**: Generates suggestions based on current weather using Google's Gemini API.
+
+## Technologies Used
+
+- Flutter & Dart
+- Visual Crossing Weather API
+- Google Generative AI (Gemini)
+- Shared Preferences for local storage
